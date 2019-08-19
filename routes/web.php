@@ -15,13 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/phpinfo', '\App\Http\Controllers\PostController@phpinfo');
 // 文章列表页
 Route::get('/posts', '\App\Http\Controllers\PostController@index');
-// 文章详情页
-Route::get('/posts/{post}', '\App\Http\Controllers\PostController@show');
 // 创建文章
 Route::get('/posts/create', '\App\Http\Controllers\PostController@create');
 Route::post('/posts', '\App\Http\Controllers\PostController@store');
+// 文章详情页
+Route::get('/posts/{post}', '\App\Http\Controllers\PostController@show');
 // 编辑文章
 Route::get('/posts/{post}/edit', '\App\Http\Controllers\PostController@edit');
 Route::put('/posts/{post}', '\App\Http\Controllers\PostController@update');

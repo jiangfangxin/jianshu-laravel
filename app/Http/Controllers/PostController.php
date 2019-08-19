@@ -2,32 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function phpinfo()
+    {
+        phpinfo();
+    }
+
     // 列表
     public function index()
     {
-        $posts = [
-            [
-                'title' => 'this is title1',
-            ],
-            [
-                'title' => 'this is title2',
-            ],
-            [
-                'title' => 'this is title3',
-            ],
-        ];
-        $topics = [];
-        return view("post/index", compact('posts', 'topics'));
+        $posts = Post::orderBy('created_at', 'desc')->paginate(6);
+        return view("post/index", compact('posts', 'name', 'age'));
     }
 
     // 详情页面
-    public function show()
+    public function show(Post $post)
     {
-        return view("post/show", ['title' => 'This is title', 'isShow' => true]);
+        return view("post/show", compact('post'));
     }
 
     public function create()
@@ -37,6 +32,12 @@ class PostController extends Controller
     
     public function store()
     {
+        $this->validate(request(), [
+            'title' => 'required|string|max:100|min:5',
+            'content' => 'required|string|min:5',
+        ]);
+        Post::create(request(['title', 'content']));
+        return redirect("/posts");
     }
 
     public function edit()
