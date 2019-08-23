@@ -16,6 +16,22 @@ Route::get('/', function () {
 });
 
 Route::get('/phpinfo', '\App\Http\Controllers\PostController@phpinfo');
+
+// 注册页面
+Route::get('/register', '\App\Http\Controllers\RegisterController@index');
+// 注册行为
+Route::post('/register', '\App\Http\Controllers\RegisterController@register');
+// 登录页面
+Route::get('/login', '\App\Http\Controllers\LoginController@index');
+// 登录行为
+Route::post('/login', '\App\Http\Controllers\LoginController@login');
+// 登出行为
+Route::get('/logout', '\App\Http\Controllers\LoginController@logout');
+// 用户设置页面
+Route::get('/user/me/setting', '\App\Http\Controllers\UserController@index');
+// 用户设置保存
+Route::post('/user/me/setting', '\App\Http\Controllers\UserController@settingStore');
+
 // 文章列表页
 Route::get('/posts', '\App\Http\Controllers\PostController@index');
 // 创建文章
@@ -27,4 +43,6 @@ Route::get('/posts/{post}', '\App\Http\Controllers\PostController@show');
 Route::get('/posts/{post}/edit', '\App\Http\Controllers\PostController@edit');
 Route::put('/posts/{post}', '\App\Http\Controllers\PostController@update');
 // 删除文章
-Route::get('/posts/delete', '\App\Http\Controllers\PostController@delete');
+Route::get('/posts/{post}/delete', '\App\Http\Controllers\PostController@delete');
+// 图片上传
+Route::post('/posts/image/upload', '\App\Http\Controllers\PostController@imageUpload');
