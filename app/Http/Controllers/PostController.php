@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\Comment;
+use App\Zan;
 use Illuminate\Http\Request;
 use Illuminate\Log\LogManager;
 
@@ -15,31 +17,21 @@ class PostController extends Controller
     }
 
     // 列表
-    public function index(LogManager $log1)
+    public function index()
     {
-        // 直接获取容器中的服务，然后使用
-        $log = app()->make('log');
-        $log->info('Get provider from container directly.');
-
-        // 通过依赖注入
-        $log1->notice('Get provider from container through IOC.');
-
-        // 通过门脸模式
-        \Log::info('Get provider from container through Facade.');
-
-        $posts = Post::orderBy('created_at', 'desc')->paginate(6);
+        $posts = Post::orderBy('created_at', 'desc')->withCount(['comments', 'zans'])->paginate(6);
         return view("post.index", compact('posts', 'name', 'age'));
     }
 
     // 详情页面
     public function show(Post $post)
     {
+        $post->load('comments');
         return view("post.show", compact('post'));
     }
 
     public function create()
     {
-        $name = 'jiangfangxin';
         return view("post.create");
     }
     
@@ -49,7 +41,8 @@ class PostController extends Controller
             'title' => 'required|string|max:100|min:5',
             'content' => 'required|string|min:5',
         ]);
-        Post::create(request(['title', 'content']));
+        $params = array_merge(request(['title', 'content']), ['user_id' => \Auth::id()]);
+        Post::create($params);
         return redirect("/posts");
     }
 
@@ -61,6 +54,8 @@ class PostController extends Controller
     public function update(Post $post)
     {
         // 验证
+        $this->authorize('update', $post);
+
         $this->validate(request(), [
             'title' => 'required|string|max:100|min:5',
             'content' => 'required|string|min:5',
@@ -77,7 +72,7 @@ class PostController extends Controller
 
     public function delete(Post $post)
     {
-        // TODO：用户权限的验证
+        $this->authorize('delete', $post);
         $post->delete();
         
         return redirect("posts");
@@ -90,5 +85,38 @@ class PostController extends Controller
             'errno' => 0,
             'data' => [asset('/storage/' . $path)]
         ]);
+    }
+
+    public function comment(Post $post)
+    {
+        // 验证
+        $this->validate(request(), [
+            'content' => 'required|min:3',
+        ]);
+
+        // 逻辑
+        $comment = new Comment();
+        $comment->user_id = \Auth::id();
+        $comment->content = request('content');
+        $post->comments()->save($comment);
+
+        // 渲染        
+        return back();
+    }
+
+    public function zan(Post $post)
+    {
+        $params = [
+            'post_id' => $post->id,
+            'user_id' => \Auth::id(),
+        ];
+        Zan::firstOrCreate($params);
+        return back();
+    }
+
+    public function unzan(Post $post)
+    {
+        $post->zan(\Auth::id())->delete();
+        return back();
     }
 }

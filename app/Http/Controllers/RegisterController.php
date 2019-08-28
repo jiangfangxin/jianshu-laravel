@@ -8,16 +8,18 @@ use Illuminate\Http\Request;
 class RegisterController extends Controller
 {
     // 注册页面
-    public function index() {
+    public function index()
+    {
         return view("register.index");
     }
 
     // 注册行为
-    public function register() {
+    public function register()
+    {
         // 验证
         $this->validate(request(), [
             'name' => 'required|min:3|unique:users,name',
-            'email' => 'required|unique:users,email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
 
