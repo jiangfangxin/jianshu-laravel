@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Topic;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \View::composer('layout.sidebar', function ($view) {
+            $topics = Topic::all();
+            $view->with('topics', $topics);
+        });
     }
 }

@@ -30,11 +30,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/user/me/setting', '\App\Http\Controllers\UserController@index');
     // 用户设置保存
     Route::post('/user/me/setting', '\App\Http\Controllers\UserController@settingStore');
+    // 用户主页
+    Route::get('/user/{user}', '\App\Http\Controllers\UserController@show');
+    // 关注用户
+    Route::post('/user/{user}/fan', '\App\Http\Controllers\UserController@fan');
+    // 取消关注用户
+    Route::post('/user/{user}/unfan', '\App\Http\Controllers\UserController@unfan');
     // 文章列表页
     Route::get('/posts', '\App\Http\Controllers\PostController@index');
     // 创建文章
     Route::get('/posts/create', '\App\Http\Controllers\PostController@create');
     Route::post('/posts', '\App\Http\Controllers\PostController@store');
+    // 搜索结果页
+    Route::get('/posts/search', '\App\Http\Controllers\PostController@search');
     // 文章详情页
     Route::get('/posts/{post}', '\App\Http\Controllers\PostController@show');
     // 编辑文章
@@ -50,6 +58,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/posts/{post}/zan', '\App\Http\Controllers\PostController@zan');
     // 取消赞
     Route::get('/posts/{post}/unzan', '\App\Http\Controllers\PostController@unzan');
+
+    // 专题页面
+    Route::get('/topics/{topic}', '\App\Http\Controllers\TopicController@show');
+    // 专题页面
+    Route::post('/topics/{topic}/submit', '\App\Http\Controllers\TopicController@submit');
 });
 
+include __DIR__ . '/admin.php';
 

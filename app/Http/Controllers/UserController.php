@@ -43,4 +43,39 @@ class UserController extends Controller
         // 渲染
         return back();
     }
+
+    public function show(User $user)
+    {
+        // 用户的信息
+        $user = User::withCount(['posts', 'stars', 'fans'])->find($user->id);
+
+        // 用户的文章列表
+        $posts = $user->posts()->take(6)->get();
+
+        // 关注明星的列表
+        $susers = User::withCount(['posts', 'stars', 'fans'])->find($user->stars()->pluck('star_id'));
+
+        // 粉丝的列表
+        $fusers = User::withCount(['posts', 'stars', 'fans'])->find($user->fans()->pluck('fan_id'));
+
+        return view("user.show", compact('user', 'posts', 'susers', 'fusers'));
+    }
+    
+    public function fan(User $user)
+    {
+        \Auth::user()->doFan($user->id);
+        return [
+            'err' => 0,
+            'msg' => '',
+        ];
+    }
+    
+    public function unfan(User $user)
+    {
+        \Auth::user()->doUnFan($user->id);
+        return [
+            'err' => 0,
+            'msg' => '',
+        ];
+    }
 }

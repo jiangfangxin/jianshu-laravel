@@ -2,8 +2,27 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
+use Laravel\Scout\Searchable;
+
 class Post extends Model
 {
+
+    use Searchable;
+
+    public function searchableAs()
+    {
+        return 'post';
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'content' => $this->content,
+        ];
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');
@@ -25,5 +44,17 @@ class Post extends Model
     public function zans()
     {
         return $this->hasMany('App\Zan');
+    }
+
+    public function topics()
+    {
+        return $this->belongsToMany(\App\Topic::class);
+    }
+
+    public function scopeNotTopic(Builder $query, $topic_id)
+    {
+        return $query->doesntHave('topics', 'and', function ($query) use ($topic_id) {
+            $query->where('topic_id', $topic_id);
+        });
     }
 }
