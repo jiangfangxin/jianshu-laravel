@@ -57,4 +57,5 @@ class Post extends Model
             $query->where('topic_id', $topic_id);
         });
     }
+
 }
