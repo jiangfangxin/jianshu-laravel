@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\AdminRole;
 use App\AdminUser;
 
 class UserController extends Controller
@@ -32,5 +33,38 @@ class UserController extends Controller
         AdminUser::create(compact('name', 'password'));
 
         return redirect('/admin/users');
+    }
+
+    // 用户角色关联
+    public function role(AdminUser $user)
+    {
+        $roles = AdminRole::all();
+        $myRoles = $user->roles;
+        return view('admin.user.role', compact('roles', 'myRoles', 'user'));
+    }
+
+    // 用户角色保存
+    public function storeRole(AdminUser $user)
+    {
+        $this->validate(request(), [
+            'roles' => 'required|array',
+        ]);
+
+        $roles = AdminRole::findMany(request('roles'));
+        $myRoles = $user->roles;
+
+        // 要增加的
+        $addRoles = $roles->diff($myRoles);
+        foreach($addRoles as $role) {
+            $user->assignRole($role);
+        }
+            
+        // 要增加的
+        $deleteRoles = $myRoles->diff($roles);
+        foreach($deleteRoles as $role) {
+            $user->deleteRole($role);
+        }
+
+        return back();
     }
 }

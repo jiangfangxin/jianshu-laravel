@@ -63,6 +63,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/topics/{topic}', '\App\Http\Controllers\TopicController@show');
     // 专题页面
     Route::post('/topics/{topic}/submit', '\App\Http\Controllers\TopicController@submit');
+    
+    // 通知
+    Route::get('/notices', '\App\Http\Controllers\NoticeController@index');
 });
 
 include __DIR__ . '/admin.php';
