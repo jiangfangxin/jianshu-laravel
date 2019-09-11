@@ -165,6 +165,9 @@ return [
         /*
          * Package Service Providers...
          */
+        Laravel\Scout\ScoutServiceProvider::class,
+        ScoutEngines\Elasticsearch\ElasticsearchProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -174,8 +177,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Laravel\Scout\ScoutServiceProvider::class,
-        ScoutEngines\Elasticsearch\ElasticsearchProvider::class,
     ],
 
     /*

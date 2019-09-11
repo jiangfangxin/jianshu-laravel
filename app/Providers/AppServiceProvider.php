@@ -28,5 +28,16 @@ class AppServiceProvider extends ServiceProvider
             $topics = Topic::all();
             $view->with('topics', $topics);
         });
+
+        /* 打印出sql到log里面
+        \DB::listen(function ($query) {
+            $sql = $query->sql;
+            $bindings = $query->bindings;
+            $time = $query->time;
+            if ($time > 1) { // 1ms
+                logger('~$', compact('sql', 'bindings', 'time'));
+            }
+        });
+        */
     }
 }
